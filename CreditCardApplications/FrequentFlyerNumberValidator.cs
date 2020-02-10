@@ -16,6 +16,7 @@ namespace CreditCardApplications
     {
         public string LicenseKey { get; }
 
+
         public bool IsValid(string frequentFlyerNumber)
         {
             throw new NotImplementedException("For demo purposes");
@@ -24,6 +25,26 @@ namespace CreditCardApplications
         public void IsValid(string frequentFlyerNumber, out bool isValid)
         {
             throw new NotImplementedException("For demo purposes");
+        }
+
+        public IServiceInformation ServiceInformation
+        {
+            get
+            {
+                throw new NotImplementedException("For demo purposes");
+            }
+        }
+
+        public ValidationMode ValidationMode
+        {
+            get
+            {
+                throw new NotImplementedException("For demo purposes");
+            }
+            set
+            {
+                throw new NotImplementedException("For demo purposes");
+            }
         }
     }
 }
