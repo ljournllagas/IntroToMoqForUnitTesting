@@ -19,10 +19,6 @@
                 return CreditCardApplicationDecision.AutoAccepted;
             }
 
-            //if (_validator.LicenseKey == "EXPIRED")
-            //{
-            //    return CreditCardApplicationDecision.ReferredToHuman;
-            //}
 
             if (_validator.ServiceInformation.License.LicenseKey == "EXPIRED")
             {
@@ -31,7 +27,18 @@
 
             _validator.ValidationMode = application.Age >= 30 ? ValidationMode.Detailed : ValidationMode.Quick;
 
-            var isValidFrequentFlyerNumber = _validator.IsValid(application.FrequentFlyerNumber);
+            bool isValidFrequentFlyerNumber;
+
+            try
+            {
+                isValidFrequentFlyerNumber =
+                    _validator.IsValid(application.FrequentFlyerNumber);
+            }
+            catch (System.Exception)
+            {
+                // log
+                return CreditCardApplicationDecision.ReferredToHuman;
+            }
 
             if (!isValidFrequentFlyerNumber)
             {
