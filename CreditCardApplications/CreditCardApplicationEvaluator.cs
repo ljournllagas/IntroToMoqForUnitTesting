@@ -9,7 +9,7 @@
 
         public CreditCardApplicationEvaluator(IFrequentFlyerNumberValidator validator)
         {
-            _validator = validator;
+            _validator = validator ?? throw new System.ArgumentNullException(nameof(validator));
         }
      
         public CreditCardApplicationDecision Evaluate(CreditCardApplication application)
@@ -17,6 +17,11 @@
             if (application.GrossAnnualIncome >= HighIncomeThreshhold)
             {
                 return CreditCardApplicationDecision.AutoAccepted;
+            }
+
+            if (_validator.LicenseKey == "EXPIRED")
+            {
+                return CreditCardApplicationDecision.ReferredToHuman;
             }
 
             var isValidFrequentFlyerNumber = _validator.IsValid(application.FrequentFlyerNumber);
@@ -37,6 +42,33 @@
             }
 
             return CreditCardApplicationDecision.ReferredToHuman;
-        }       
+        }
+
+        public CreditCardApplicationDecision EvaluateUsingOut(CreditCardApplication application)
+        {
+            if (application.GrossAnnualIncome >= HighIncomeThreshhold)
+            {
+                return CreditCardApplicationDecision.AutoAccepted;
+            }
+
+            _validator.IsValid(application.FrequentFlyerNumber, out var isValidFrequentFlyerNumber);
+
+            if (!isValidFrequentFlyerNumber)
+            {
+                return CreditCardApplicationDecision.ReferredToHuman;
+            }
+
+            if (application.Age <= AutoReferralMaxAge)
+            {
+                return CreditCardApplicationDecision.ReferredToHuman;
+            }
+
+            if (application.GrossAnnualIncome < LowIncomeThreshhold)
+            {
+                return CreditCardApplicationDecision.AutoDeclined;
+            }
+
+            return CreditCardApplicationDecision.ReferredToHuman;
+        }
     }
 }
